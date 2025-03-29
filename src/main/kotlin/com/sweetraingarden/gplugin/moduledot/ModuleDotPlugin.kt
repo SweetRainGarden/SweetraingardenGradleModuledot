@@ -26,7 +26,7 @@ class ModuleDotPlugin : Plugin<Project> {
         }
     }
 
-    private fun generateDotGraph(project: Project) {
+    internal fun generateDotGraph(project: Project) {
         val graph: Graph<String, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
         
         // Add all projects to the graph

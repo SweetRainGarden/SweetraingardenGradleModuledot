@@ -1,6 +1,7 @@
 plugins {
     `java-gradle-plugin`
     `maven-publish`
+    kotlin("jvm") version "1.9.22"
 }
 
 group = "com.sweetraingarden.gplugin"
@@ -24,6 +25,14 @@ dependencies {
 
 tasks.withType<Copy>().configureEach {
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+        apiVersion = "1.9"
+        languageVersion = "1.9"
+    }
 }
 
 tasks.test {
