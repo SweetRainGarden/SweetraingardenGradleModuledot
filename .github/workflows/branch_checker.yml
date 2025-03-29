@@ -6,6 +6,8 @@ on:
       - develop
       - 'feature/**'
       - 'release/**'
+      - 'renovate/**'
+      - 'ci/**'
   pull_request:
     branches:
       - develop
