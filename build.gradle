@@ -4,6 +4,7 @@ plugins {
 }
 
 group = 'com.sweetraingarden.gplugin'
+def artifactId = 'moduledot'
 version = '1.0.0'
 
 repositories {
@@ -32,10 +33,10 @@ test {
 gradlePlugin {
     plugins {
         moduledot {
-            id = 'com.sweetraingarden.gplugin.moduledot'
+            id = "$group.$artifactId"
             implementationClass = 'com.sweetraingarden.gplugin.moduledot.ModuleDotPlugin'
             displayName = 'Module Dependency Graph Generator'
-            description = 'Generates a DOT graph of module dependencies in an Android project'
+            description = 'Generates a DOT graph of module dependencies in an Gradle project'
         }
     }
 }
@@ -43,9 +44,9 @@ gradlePlugin {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'com.sweetraingarden.gplugin'
-            artifactId = 'moduledot'
-            version = '1.0.0'
+            groupId = group
+            artifactId = artifactId
+            version = version
         }
     }
     repositories {
