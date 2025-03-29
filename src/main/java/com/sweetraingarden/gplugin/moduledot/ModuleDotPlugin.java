@@ -61,7 +61,7 @@ public class ModuleDotPlugin implements Plugin<Project> {
         });
 
         // Export to file
-        File outputFile = new File(project.getBuildDir(), "module-dependencies.dot");
+        File outputFile = project.getLayout().getBuildDirectory().file("module-dependencies.dot").get().getAsFile();
         outputFile.getParentFile().mkdirs();
         try (FileWriter writer = new FileWriter(outputFile)) {
             exporter.exportGraph(graph, writer);

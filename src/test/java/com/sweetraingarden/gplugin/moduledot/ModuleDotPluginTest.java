@@ -58,7 +58,7 @@ class ModuleDotPluginTest {
         plugin.generateDotGraph(rootProject);
 
         // Verify output file exists
-        File outputFile = new File(rootProject.getBuildDir(), "module-dependencies.dot");
+        File outputFile = rootProject.getLayout().getBuildDirectory().file("module-dependencies.dot").get().getAsFile();
         assertTrue(outputFile.exists(), "DOT file should be created");
 
         // Read and verify content
