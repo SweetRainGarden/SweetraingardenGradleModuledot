@@ -1,0 +1,47 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'maven-publish'
+}
+
+group = 'com.sweetraingarden.gplugin'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation 'org.jgrapht:jgrapht-core:1.5.1'
+    implementation 'org.jgrapht:jgrapht-io:1.5.1'
+}
+
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+gradlePlugin {
+    plugins {
+        moduledot {
+            id = 'com.sweetraingarden.gplugin.moduledot'
+            implementationClass = 'com.sweetraingarden.gplugin.moduledot.ModuleDotPlugin'
+            displayName = 'Module Dependency Graph Generator'
+            description = 'Generates a DOT graph of module dependencies in an Android project'
+        }
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.sweetraingarden.gplugin'
+            artifactId = 'moduledot'
+            version = '1.0.0'
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
+        }
+    }
+} 
