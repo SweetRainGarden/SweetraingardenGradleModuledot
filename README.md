@@ -1,4 +1,4 @@
-# SweetRainGarden Module Dependency Graph Generator
+# SweetRainGarden Module Dependency Graph Generator [![Branch Checker](https://github.com/SweetRainGarden/SweetraingardenGradleModuledot/actions/workflows/branch_checker.yml/badge.svg)](https://github.com/SweetRainGarden/SweetraingardenGradleModuledot/actions/workflows/branch_checker.yml)
 
 A Gradle plugin that generates a DOT graph visualization of module dependencies in your Android project.
 
