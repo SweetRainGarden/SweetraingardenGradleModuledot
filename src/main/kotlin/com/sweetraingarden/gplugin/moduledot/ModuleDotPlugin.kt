@@ -2,12 +2,12 @@ package com.sweetraingarden.gplugin.moduledot
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.jgrapht.Graph
 import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.nio.DefaultAttribute
 import org.jgrapht.nio.dot.DOTExporter
-import java.io.File
 import java.io.FileWriter
 
 class ModuleDotPlugin : Plugin<Project> {
@@ -29,26 +29,16 @@ class ModuleDotPlugin : Plugin<Project> {
     internal fun generateDotGraph(project: Project) {
         val graph: Graph<String, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
         
-        // Add all projects to the graph
-        project.allprojects.forEach { p -> graph.addVertex(p.name) }
+        // Build graph using project paths as unique identifiers
+        buildProjectGraph(project, graph)
         
-        // Add dependencies between projects
-        project.allprojects.forEach { p ->
-            p.configurations.forEach { config ->
-                config.dependencies.forEach { dep ->
-                    if (dep is org.gradle.api.artifacts.ProjectDependency) {
-                        graph.addEdge(p.name, dep.dependencyProject.name)
-                    }
-                }
-            }
-        }
-
-        // Create DOT exporter
+        // Create DOT exporter with custom vertex labeling
         val exporter = DOTExporter<String, DefaultEdge>()
-        exporter.setVertexAttributeProvider { v ->
+        exporter.setVertexAttributeProvider { vertex ->
             mapOf(
-                "label" to DefaultAttribute.createAttribute(v),
-                "shape" to DefaultAttribute.createAttribute("box")
+                "label" to DefaultAttribute.createAttribute(getProjectNameFromPath(vertex)),
+                "shape" to DefaultAttribute.createAttribute("box"),
+                "tooltip" to DefaultAttribute.createAttribute(vertex)
             )
         }
 
@@ -60,5 +50,35 @@ class ModuleDotPlugin : Plugin<Project> {
         }
         
         project.logger.lifecycle("Module dependency graph generated at: ${outputFile.absolutePath}")
+    }
+    
+    private fun buildProjectGraph(rootProject: Project, graph: Graph<String, DefaultEdge>) {
+        // First, create a map of project paths to their configurations
+        val projectMap = mutableMapOf<String, Project>()
+        
+        // Collect all projects and their paths
+        rootProject.allprojects.forEach { project ->
+            projectMap[project.path] = project
+            graph.addVertex(project.path)
+        }
+        
+        // Process dependencies using the map
+        projectMap.values.forEach { project ->
+            project.configurations.forEach { config ->
+                config.dependencies
+                    .filterIsInstance<ProjectDependency>()
+                    .map { it.path }  // Use path instead of dependencyProject
+                    .distinct()
+                    .forEach { dependencyPath ->
+                        if (projectMap.containsKey(dependencyPath)) {
+                            graph.addEdge(project.path, dependencyPath)
+                        }
+                    }
+            }
+        }
+    }
+    
+    private fun getProjectNameFromPath(path: String): String {
+        return path.substringAfterLast(':').ifEmpty { "root" }
     }
 } 
