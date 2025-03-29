@@ -54,4 +54,4 @@ publishing {
             url = uri("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
         }
     }
-} 
+}
