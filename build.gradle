@@ -1,6 +1,6 @@
 plugins {
     id 'java-gradle-plugin'
-    id 'maven-publish'
+    id("com.vanniktech.maven.publish") version "0.30.0"
 }
 
 group = 'com.sweetraingarden.gplugin'
@@ -41,17 +41,47 @@ gradlePlugin {
     }
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = group
-            artifactId = artifactId
-            version = version
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId = group
+//            artifactId = artifactId
+//            version = version
+//        }
+//    }
+//    repositories {
+//        maven {
+//            url = uri("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
+//        }
+//    }
+//}
+
+// <module directory>/build.gradle.kts
+
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    signAllPublications()
+
+    coordinates(group.toString(), artifactId, version.toString())
+
+    pom {
+        name = "Fibonacci library"
+        description = "A mathematics calculation library."
+        inceptionYear = "2025"
+        url = "https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git"
+
+        developers {
+            developer {
+                id = "SweetRainGarden"
+                name = "Sweet Rain Garden"
+                url = "https://github.com/SweetRainGarden"
+            }
+        }
+        scm {
+            url = "https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git"
+            connection = "scm:git:git://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git"
+            developerConnection = "scm:git:ssh://git@github.com/SweetRainGarden/SweetraingardenGradleModuledot.git"
         }
     }
-    repositories {
-        maven {
-            url = uri("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
-        }
-    }
-} 
+}
