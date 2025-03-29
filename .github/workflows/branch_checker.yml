@@ -41,7 +41,6 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
-
       - name: Build with Gradle
         run: ./gradlew build --no-daemon
 
@@ -54,8 +53,8 @@ jobs:
         with:
           name: build-reports-${{ matrix.os }}-java-${{ matrix.java-version }}
           path: |
-            build/reports/
-            */build/reports/
+            build/reports/plugin-development/
+            build/reports/problems/
           retention-days: 7
 
       - name: Upload test results
@@ -63,7 +62,6 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
           name: test-results-${{ matrix.os }}-java-${{ matrix.java-version }}
-          path: |
-            build/test-results/
-            */build/test-results/
+          path: build/test-results/
+          if-no-files-found: ignore
           retention-days: 7 
