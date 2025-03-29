@@ -32,7 +32,7 @@ public class ModuleDotPlugin implements Plugin<Project> {
         });
     }
 
-    private void generateDotGraph(Project project) throws IOException {
+    public void generateDotGraph(Project project) throws IOException {
         Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         
         // Add all projects to the graph
