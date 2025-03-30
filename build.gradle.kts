@@ -5,8 +5,7 @@ plugins {
 }
 
 group = "com.sweetraingarden.gplugin"
-val artifactId = "moduledot"
-version = "1.0.0"
+version = "1.0.5"
 
 java {
     toolchain {
@@ -18,7 +17,7 @@ dependencies {
     implementation(gradleApi())
     implementation("org.jgrapht:jgrapht-core:1.5.1")
     implementation("org.jgrapht:jgrapht-io:1.5.1")
-    
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.1")
     testImplementation("org.mockito:mockito-core:5.10.0")
@@ -42,7 +41,7 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("moduledot") {
-            id = "$group.$artifactId"
+            id = "$group.moduledot"
             implementationClass = "com.sweetraingarden.gplugin.moduledot.ModuleDotPlugin"
             displayName = "Module Dependency Graph Generator"
             description = "Generates a DOT graph of module dependencies in an Gradle project"
@@ -50,19 +49,25 @@ gradlePlugin {
     }
 }
 
+//./gradlew clean build publishGithubPublicationToGithubPackagesRepository
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("github") {
             from(components["java"])
-            groupId = "com.sweetraingarden.gplugin"
+            groupId = "$group"
             artifactId = "moduledot"
-            version = "1.0.0"
+            version = version
         }
     }
     repositories {
         maven {
-            name = "local"
-            url = uri("${buildDir}/repo")
+            name = "githubPackages"
+            url = uri("https://maven.pkg.github.com/SweetRainGarden/SweetraingardenGradleModuledot")
+
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
         }
     }
 }
