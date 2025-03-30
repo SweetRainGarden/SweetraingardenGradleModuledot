@@ -1,7 +1,9 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     `java-gradle-plugin`
-    `maven-publish`
     kotlin("jvm") version "1.9.22"
+    id("com.vanniktech.maven.publish") version "0.30.0"
     signing
 }
 
@@ -43,7 +45,7 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("moduledot") {
-            id = "${group}.$artifactId"
+            id = "$group.$artifactId"
             implementationClass = "com.sweetraingarden.gplugin.moduledot.ModuleDotPlugin"
             displayName = "Module Dependency Graph Generator"
             description = "Generates a DOT graph of module dependencies in an Gradle project"
@@ -51,50 +53,38 @@ gradlePlugin {
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            groupId = group.toString()
-            artifactId = artifactId
-            version = version.toString()
-            
-            pom {
-                name.set("Module Dependency Graph Generator")
-                description.set("Generates a DOT graph of module dependencies in an Gradle project")
-                url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
-                
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                
-                developers {
-                    developer {
-                        id.set("SweetRainGarden")
-                        name.set("Sweet Rain Garden")
-                    }
-                }
-                
-                scm {
-                    connection.set("scm:git:git://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
-                    developerConnection.set("scm:git:ssh://github.com:SweetRainGarden/SweetraingardenGradleModuledot.git")
-                    url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
-                }
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+    coordinates(group.toString(), artifactId, version.toString())
+    pom {
+        name.set("Module Dependency Graph Generator")
+        description.set("Generates a DOT graph of module dependencies in an Gradle project")
+        url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
             }
         }
-    }
-    
-    repositories {
-        maven {
-            name = "sonatype"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = findProperty("sonatypeUsername") as? String
-                password = findProperty("sonatypePassword") as? String
+        developers {
+            developer {
+                id.set("SweetRainGarden")
+                name.set("Sweet Rain Garden")
+                url.set("https://github.com/SweetRainGarden/")
             }
+        }
+        scm {
+            url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
+            connection.set("scm:git:git://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
+            developerConnection.set("scm:git:ssh://git@github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
+        }
+    }
+    signing {
+        val signingKey = findProperty("signing.key") as? String
+        val signingPassword = findProperty("signing.password") as? String
+        if (signingKey != null && signingPassword != null) {
+            useInMemoryPgpKeys(signingKey, signingPassword)
         }
     }
 }
