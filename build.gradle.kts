@@ -2,11 +2,12 @@ plugins {
     `java-gradle-plugin`
     `maven-publish`
     kotlin("jvm") version "1.9.22"
+    signing
 }
 
 group = "com.sweetraingarden.gplugin"
 val artifactId = "moduledot"
-version = "1.0.0"
+version = "1.0.1"
 
 java {
     toolchain {
@@ -42,7 +43,7 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("moduledot") {
-            id = "$group.$artifactId"
+            id = "${group}.$artifactId"
             implementationClass = "com.sweetraingarden.gplugin.moduledot.ModuleDotPlugin"
             displayName = "Module Dependency Graph Generator"
             description = "Generates a DOT graph of module dependencies in an Gradle project"
@@ -54,15 +55,47 @@ publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
-            groupId = "com.sweetraingarden.gplugin"
-            artifactId = "moduledot"
-            version = "1.0.0"
+            groupId = group.toString()
+            artifactId = artifactId
+            version = version.toString()
+            
+            pom {
+                name.set("Module Dependency Graph Generator")
+                description.set("Generates a DOT graph of module dependencies in an Gradle project")
+                url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
+                
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                
+                developers {
+                    developer {
+                        id.set("SweetRainGarden")
+                        name.set("Sweet Rain Garden")
+                    }
+                }
+                
+                scm {
+                    connection.set("scm:git:git://github.com/SweetRainGarden/SweetraingardenGradleModuledot.git")
+                    developerConnection.set("scm:git:ssh://github.com:SweetRainGarden/SweetraingardenGradleModuledot.git")
+                    url.set("https://github.com/SweetRainGarden/SweetraingardenGradleModuledot")
+                }
+            }
         }
     }
+    
     repositories {
         maven {
-            name = "local"
-            url = uri("${buildDir}/repo")
+            name = "sonatype"
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = findProperty("sonatypeUsername") as? String
+                password = findProperty("sonatypePassword") as? String
+            }
         }
     }
 }
+
