@@ -16,7 +16,7 @@ java {
 dependencies {
     implementation(gradleApi())
     implementation("org.jgrapht:jgrapht-core:1.5.1")
-    implementation("org.jgrapht:jgrapht-io:1.5.1")
+    implementation("org.jgrapht:jgrapht-io:1.5.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.1")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.1")
